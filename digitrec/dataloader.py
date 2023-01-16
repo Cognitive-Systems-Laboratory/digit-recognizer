@@ -21,6 +21,7 @@ class DigitDataset(Dataset):
 
         self.use_augmentation = use_augmentation
         self.transforms = tfm.Compose([
+            tfm.ToTensor(),
             tfm.GaussianBlur(kernel_size=3),
             tfm.RandomRotation(degrees=(-30, 30)),
             tfm.RandomCrop(size=(22, 22)),
@@ -28,7 +29,7 @@ class DigitDataset(Dataset):
         ])
         
     def __getitem__(self, index: int) -> Tuple[np.ndarray, np.ndarray]:
-        X = self.digits[index].reshape(28, 28)
+        X = self.digits[index].reshape(28, 28).astype(np.float32)
         if self.use_augmentation:
             X = self.transforms(X)
         y = self.labels[index]
