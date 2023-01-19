@@ -24,7 +24,6 @@ class DigitDataset(Dataset):
             tfm.ToTensor(),
             tfm.GaussianBlur(kernel_size=3),
             tfm.RandomRotation(degrees=(-30, 30)),
-            tfm.RandomCrop(size=(22, 22)),
             tfm.Normalize(mean=0, std=1.),
         ])
 
