@@ -15,7 +15,7 @@ class DigitDataset(Dataset):
         file_name: str = "train.csv",
         use_augmentation: bool = True,
     ) -> None:
-        data = pd.read_csv(data_dir / file_name)
+        data = pd.read_csv(Path(data_dir) / file_name)
         self.labels: np.ndarray = data["label"].values
         self.digits: np.ndarray = data.filter(like="pixel").values
 
