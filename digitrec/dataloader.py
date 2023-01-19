@@ -8,7 +8,7 @@ import torchvision.transforms as tfm
 
 
 class DigitDataset(Dataset):
-    
+
     def __init__(
         self,
         data_dir: Path | str = Path("data/"),
@@ -27,7 +27,7 @@ class DigitDataset(Dataset):
             tfm.RandomCrop(size=(22, 22)),
             tfm.Normalize(mean=0, std=1.),
         ])
-        
+
     def __getitem__(self, index: int) -> Tuple[np.ndarray, np.ndarray]:
         X = self.digits[index].reshape(28, 28).astype(np.float32)
         if self.use_augmentation:
