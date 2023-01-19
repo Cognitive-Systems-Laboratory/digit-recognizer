@@ -1,0 +1,7 @@
+# Flake8 configuration file.
+[flake8]
+count = True
+max-line-length = 100
+show_source = True
+statistics = True
+exclude = .git,__pycache__,.vscode,.idea,
