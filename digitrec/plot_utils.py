@@ -8,10 +8,11 @@ def _plot_tensor(X: torch.Tensor, y: torch.Tensor = None, ax=None):
     if ax is None:
         fig, ax = plt.subplots()
     X = X.numpy()
-    ax.imshow(X, cmap="gray");
+    ax.imshow(X, cmap="gray")
     if y is not None:
         ax.set_title(f"Label: {y}")
         ax.tick_params(left=False, right=False, labelleft=False, labelbottom=False, bottom=False)
+
 
 def plot_tensors(X: torch.Tensor, y: torch.Tensor):
     fig, _ax = plt.subplots(figsize=(6, 3), nrows=2, ncols=4)
