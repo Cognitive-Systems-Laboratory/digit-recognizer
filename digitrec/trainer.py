@@ -1,3 +1,4 @@
+import torch
 import torch.optim as optim
 import torch.nn as nn
 from torch.utils.data import DataLoader
@@ -41,7 +42,14 @@ class Trainer:
                 loss.backward()
                 self.optimizer.step()
 
-    def fit(self, epochs=20):
+    def fit(self, epochs: int = 20):
         for e in range(epochs):
+            self.model.train()
             self._epoch(dataloader=self.train_dataloader, update_params=True)
+
+            self.model.eval()
             self._epoch(dataloader=self.valid_dataloader, update_params=False)
+        self.save_checkpoint(model=self.model, model_dir="./ckpt.pt")
+        
+    def save_checkpoint(self, model: nn.Module, model_dir: str):
+        torch.save(model, model_dir)
