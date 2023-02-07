@@ -4,6 +4,10 @@ model:
   in_planes: [48, 64, 96]
   no_max_pool: False
 
+loss:
+  _target_: torch.nn.MSELoss
+
+
 defaults:
   - _self_
   - optimizer: base
