@@ -1,0 +1,9 @@
+batch_size: 16
+model:
+  depth: 34
+  in_planes: [48, 64, 96]
+  no_max_pool: False
+
+defaults:
+  - _self_
+  - optimizer: base
