@@ -7,7 +7,6 @@ model:
 loss:
   _target_: torch.nn.MSELoss
 
-
 defaults:
   - _self_
   - optimizer: base

@@ -1,9 +1,13 @@
-import timm
-from digitrec.trainer import Trainer
+import hydra
+import omegaconf
+from digitrec.trainer import setup_trainer
+
+
+@hydra.main(version_base="1.3", config_path="configs", config_name="train")
+def main(cfg: omegaconf.DictConfig) -> None:
+    trainer = setup_trainer(config=cfg)
+    trainer.fit()
 
 
 if __name__=="__main__":
-    model = timm.create_model("resnet10t", num_classes=10, in_chans=1)
-    trainer = Trainer(model=model, optimizer="adam")
-
-    trainer.fit(epochs=10)
+    main()

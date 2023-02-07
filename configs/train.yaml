@@ -1,0 +1,26 @@
+device: mps
+modes:
+  - train
+  - valid
+
+data:
+  _target_: torch.utils.data.DataLoader
+  dataset:
+    _target_: digitrec.dataloader.DigitDataset
+    data_dir: ./data
+    file_name: train.csv
+  batch_size: 64
+
+optimizer:
+  _target_: torch.optim.AdamW
+  lr: 1e-4
+
+model:
+  model_name: resnet10t
+  num_classes: 10
+  in_chans: 1
+
+trainer:
+  _target_: digitrec.trainer.Trainer
+  loss_fn:
+    _target_: torch.nn.CrossEntropyLoss

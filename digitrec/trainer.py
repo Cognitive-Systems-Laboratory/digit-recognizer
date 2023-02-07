@@ -1,34 +1,26 @@
+import hydra
+import timm
 import torch
 import torch.optim as optim
 import torch.nn as nn
 from torch.utils.data import DataLoader
 
-from .dataloader import DigitDataset
-
 
 class Trainer:
     def __init__(self,
                  model: nn.Module,
-                 optimizer: str,
+                 optimizer: optim.Optimizer,
+                 loaders: dict,
+                 loss_fn: nn.Module,
                  device: str = "mps",
-                 data_dir: str = "./data",
-                 file_name: str = "train.csv",
-                 batch_size: int = 64):
+                 epochs: int = 20):
         self.model = model.to(device)
+        self.optimizer = optimizer
+        self.loss_fn = loss_fn
         self.device = device
-        self.configure_optimizer(optimizer=optimizer, model=self.model)
-        self.loss_fn = nn.CrossEntropyLoss()
-
-        train_dataset = DigitDataset(data_dir=data_dir, file_name=file_name, mode="train")
-        self.train_dataloader = DataLoader(train_dataset, batch_size=batch_size)
-        valid_dataset = DigitDataset(data_dir=data_dir, file_name=file_name, mode="valid", use_augmentation=False)
-        self.valid_dataloader = DataLoader(valid_dataset, batch_size=batch_size)
-
-    def configure_optimizer(self, optimizer: str, model: nn.Module):
-        self.optimizer = {
-            "adam": optim.Adam,
-            "adamw": optim.AdamW
-        }[optimizer.lower()](model.parameters())
+        self.epochs = epochs
+        for mode, loader in loaders.items():
+            setattr(self, f"{mode}_dataloader", loader)
 
     def _epoch(self, dataloader: DataLoader, update_params: bool = True):
         for img, y_true in dataloader:
@@ -42,7 +34,8 @@ class Trainer:
                 loss.backward()
                 self.optimizer.step()
 
-    def fit(self, epochs: int = 20):
+    def fit(self, epochs: int = None):
+        epochs = epochs or self.epochs
         for e in range(epochs):
             self.model.train()
             self._epoch(dataloader=self.train_dataloader, update_params=True)
@@ -53,3 +46,20 @@ class Trainer:
         
     def save_checkpoint(self, model: nn.Module, model_dir: str):
         torch.save(model, model_dir)
+
+
+def setup_trainer(config) -> Trainer:
+
+    model: nn.Module = timm.create_model(**config.model)
+    optimizer = hydra.utils.instantiate(config.optimizer, params=model.parameters())
+    device: str = config.device
+    loaders = {mode: hydra.utils.instantiate(
+                config.data,
+                dataset={"mode": mode})
+               for mode in config.modes}
+    trainer = hydra.utils.instantiate(config.trainer, 
+                                      model=model,
+                                      optimizer=optimizer,
+                                      loaders=loaders,
+                                      device=device)
+    return trainer
