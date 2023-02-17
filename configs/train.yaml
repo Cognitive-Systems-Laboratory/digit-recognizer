@@ -24,3 +24,8 @@ trainer:
   _target_: digitrec.trainer.Trainer
   loss_fn:
     _target_: torch.nn.CrossEntropyLoss
+  epochs: 10
+
+logging:
+  project: digit-recognizer
+  name: lr=${optimizer.lr} | bsz=${data.batch_size}
